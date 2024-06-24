@@ -6,9 +6,11 @@
 #include <string>
 #include <random>
 using namespace std;
+//Selection Sort
 void selection_sort(vector<int>& v) {
     int n = v.size();
     for (int i = 0; i < n - 1; i++) {
+        //Find the minimum value and save it (value and position)
         int min_num = v[i];
         int idx = i;
         for (int j = i + 1; j < n; j++) {
@@ -17,9 +19,12 @@ void selection_sort(vector<int>& v) {
                 idx = j;
             }
         }
+        //Swap minimum value of unsorted array to the last of sort value
+        //Expand the sorted array 
         swap(v[i], v[idx]);
     }
 }
+//Exchange sprt
 void exchange_sort(vector<int>& v) {
     int n = v.size();
     for (int i = 0; i < n - 1; i++) {
@@ -30,18 +35,25 @@ void exchange_sort(vector<int>& v) {
         }
     }
 }
-void buble_sort(vector<int>& v) {
+//Bubble sort
+void bubble_sort(vector<int>& v) {
     int n = v.size();
     for (int i = 0; i < n - 1; i++) {
         for (int j = 1; j < n - i; j++) {
+            //Compare the element i and i + 1
+            //Swap it if element i larger than > i + 1
             if (v[j] < v[j - 1]) swap(v[j], v[j - 1]);
         }
     }
 }
+//Shaker sort
 void shaker_sort(vector<int>& v) {
     int n = v.size();
     bool swapped = true;
     while (swapped) {
+        //We use bubble sort 2 times
+        //First, from 0 to n - 1 
+        //and swap it if the left ones larger than the right ones
         swapped = false;
         for (int i = 0; i < n - 1; i++) {
             if (v[i] > v[i + 1]) {
@@ -49,8 +61,10 @@ void shaker_sort(vector<int>& v) {
                 swapped = true;
             }
         }
+        //If not swapped -> the array still sort -> we break
         if (!swapped) break;
         swapped = false;
+        //Second, from n-2 to 0
         for (int i = n - 2; i >= 0; i--) {
             if (v[i] > v[i + 1]) {
                 swap(v[i], v[i + 1]);
@@ -59,18 +73,25 @@ void shaker_sort(vector<int>& v) {
         }
     }
 }
+//Insertion sort
 void insertion_sort(vector<int>& arr, int n) {
+    //Check the value i from 1 to n
+    //Then, compare it to the subarr 0 to i - 1
     for (int i = 1; i < n; i++) {
         int key = arr[i];
         int j = i - 1;
+        //Move all element in subarr (0 to i - 1) to the right side
         while (j >= 0 && arr[j] > key) {
             arr[j + 1] = arr[j];
             j--;
         }
+        //Finally, insert element i to the right position to sorted
         arr[j + 1] = key;
     }
 }
+//Merge sort
 void merge(vector<int>& arr, int p, int q, int r) {
+    //Divdie into 2 subarray from arr to merge it
     int nL = q - p + 1;
     int nR = r - q;
     int* L = new int[nL];
@@ -81,6 +102,8 @@ void merge(vector<int>& arr, int p, int q, int r) {
     for (int i = 0; i < nR; i++) {
         R[i] = arr[q + 1 + i];
     }
+    //Compare each element of 2 subarray together
+    //and save it to the third array to make it sorted
     int i = 0;
     int j = 0;
     int k = p;
@@ -95,6 +118,7 @@ void merge(vector<int>& arr, int p, int q, int r) {
         }
         k++;
     }
+    //If there are still element in 2 subarray, add it to third array
     while (i < nL) {
         arr[k] = L[i];
         i++;
@@ -108,11 +132,16 @@ void merge(vector<int>& arr, int p, int q, int r) {
     delete[] L;
     delete[] R;
 }
+//That function use recursive to divide into 2 subarray
+//Then, use merge to make it sorted
 void merge_sort(vector<int>& arr, int p, int r) {
     if (p >= r) return;
+    //Find mid to divide into 2 halves
     int q = (p + r) / 2;
+    //Continue divide it
     merge_sort(arr, p, q);
     merge_sort(arr, q + 1, r);
+    //Merge 2 subarray and make it sorted
     merge(arr, p, q, r);
 }
 void max_heapify(vector<int>& v, int i, int heap_size) {
@@ -196,26 +225,34 @@ int get_max(vector<int> v) {
     }
     return m;
 }
+//Counting sort
 vector<int> counting_sort(vector<int> v, int k) {
     int n = v.size();
+    //Initialize ans to save the final sorted array
     vector<int> ans(n);
+    //Initialize c to count the number of (0 -> 9) appeared
     vector<int> c(k + 1, 0);
+    //Count the number of appearances
     for (int i = 0; i < n; i++) {
         c[v[i]]++;
     }
+    //Base on the number of appearances to expand it in order to save all the element
     for (int i = 1; i <= k; i++) {
         c[i] += c[i - 1];
     }
+    //use c as index of ans to save the element from n-1 to 0
     for (int i = n - 1; i >= 0; i--) {
         ans[c[v[i]] - 1] = v[i];
         c[v[i]]--;
     }
+    //Then, the ans will be sorted
     return ans;
 }
 void radix_sort(vector<int>& v) {
     int max_num = *max_element(v.begin(), v.end());
 
     int n = v.size();
+    //We use counting sort to sort the number at the same units
     for (int i = 1; max_num / i > 0; i *= 10) {
         //Counting sort
         vector<int> a(n, 0);
@@ -235,6 +272,7 @@ void radix_sort(vector<int>& v) {
         }
     }
 }
+//Shell sort
 void shell_sort(vector<int>& v) {
     int n = v.size();
     for (int gap = n / 2; gap > 0; gap /= 2) {
@@ -249,7 +287,7 @@ void shell_sort(vector<int>& v) {
         }
     }
 }
-
+//Bucket sort
 void bucket_sort(vector<int>& v) {
     int n = v.size();
     vector<vector<int>> b(n);
@@ -280,7 +318,86 @@ void bucket_sort(vector<int>& v) {
         }
     }
 }
-int main()
+//Flash sort
+int findposofMax(vector<int> arr) {
+    int n = arr.size();
+    int Max = INT_MIN, idx;
+    for (int i = 0; i < n; i++)
+        if (arr[i] > Max) {
+            Max = arr[i];
+            idx = i;
+        }
+    return idx;
+}
+int findMin(vector<int> arr) {
+    int n = arr.size();
+    int Min = INT_MAX;
+    for (int i = 0; i < n; i++)
+        if (arr[i] < Min)
+            Min = arr[i];
+    return Min;
+}
+void flash_sort(vector<int>& arr) {
+    int n = arr.size();
+    //Find pos of Max in array
+    int max = findposofMax(arr);
+    int MaxVal = arr[max];
+    //Find min value of array
+    int MinVal = findMin(arr);
+    //Set the number of class in the array to divide (m)
+    //Then, Create one list to save the Last index of each Class
+    int m = int(0.45 * n);
+    int Lastindex[10] = { 0 };
+    //Find the number of element for each class
+    //Then, Find the last element of each class
+    for (int i = 0; i < n; i++)
+        Lastindex[int((m - 1) * (arr[i] - MinVal) / (arr[max] - MinVal))]++;
+    cout << endl;
+    Lastindex[0]--;
+    for (int i = 1; i < m; i++)
+        Lastindex[i] += Lastindex[i - 1];
+    swap(arr[0], arr[max]);
+    int move = 0, i = 0;
+    while (move != n - 1) {
+        int flash = arr[0];
+        int pos = int((m - 1) * (flash - MinVal) / (MaxVal - MinVal));
+        swap(arr[0], arr[Lastindex[pos]]);
+        Lastindex[pos]--;
+        i++;
+        move++;
+    }
+    insertion_sort(arr, n);
+}
+//Binary Insertion Sort
+//Using binary search to find the element where item should be inserted
+//in left to right
+int BinarySearch(vector<int> arr, int val, int left, int right) {
+    if (left >= right) {
+        if (val > arr[left]) return left + 1;
+        else return left;
+    }
+    int mid = (left + right) / 2;
+    if (arr[mid] == val) return mid + 1;
+    else if (arr[mid] > val) return BinarySearch(arr, val, left, mid - 1);
+    else return BinarySearch(arr, val, mid + 1, right);
+}
+void binary_insertion_sort(vector<int>& arr) {
+    int n = arr.size();
+    for (int i = 1; i < n; i++) {
+        int j = i - 1;
+        int tmp = arr[i];
+        //Find the position where arr[i] should be inserted
+        int pos = BinarySearch(arr, tmp, 0, j);
+        //Move all element after that position to the right side
+        //to make the space for arr[i]
+        while (j >= pos) {
+            arr[j + 1] = arr[j];
+            j--;
+        }
+        arr[j + 1] = tmp;
+    }
+}
+/*int main()
 {
     cout << "Please input size: ";
     int n; cin >> n;
@@ -288,7 +405,7 @@ int main()
     // Random vector
     vector<int> v(n);
     /*srand(time(NULL));
-    auto f = []() -> int { return rand() % 10000; };*/
+    auto f = []() -> int { return rand() % 10000; };
     random_device rnd_device;
     mt19937 mersenne_engine{ rnd_device() };
     uniform_int_distribution<int> distribution(0, n);
@@ -343,5 +460,5 @@ int main()
     cout << "Time taken by funciton: " << duration.count() << " milliseconds" << endl;
 
     return 0;
-}
+}*/
 

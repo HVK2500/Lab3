@@ -2,6 +2,7 @@
 #include <fstream>
 #include <cmath>
 #include <ctime>
+#include <vector>
 using namespace std;
 
 template <class T>
@@ -15,9 +16,9 @@ void Swap(T& a, T& b)
 //-------------------------------------------------
 
 // This function generates a random array
-void GenerateRandomData(int a[], int n)
+void GenerateRandomData(vector<int>& a, int n)
 {
-	srand((unsigned int)time(NULL));
+	srand((int)time(NULL));
 
 	for (int i = 0; i < n; i++)
 	{
@@ -26,7 +27,7 @@ void GenerateRandomData(int a[], int n)
 }
 
 // This function generates a sorted array (ascending order)
-void GenerateSortedData(int a[], int n)
+void GenerateSortedData(vector<int>& a, int n)
 {
 	for (int i = 0; i < n; i++)
 	{
@@ -35,7 +36,7 @@ void GenerateSortedData(int a[], int n)
 }
 
 // This function generates a reverse-sorted array (descending order)
-void GenerateReverseData(int a[], int n)
+void GenerateReverseData(vector<int>& a, int n)
 {
 	for (int i = 0; i < n; i++)
 	{
@@ -44,14 +45,14 @@ void GenerateReverseData(int a[], int n)
 }
 
 // This function generates a nearly-sorted array
-void GenerateNearlySortedData(int a[], int n)
+void GenerateNearlySortedData(vector<int>& a, int n)
 {
 	for (int i = 0; i < n; i++)
 	{
 		a[i] = i;
 	}
 
-	srand((unsigned int)time(NULL));
+	srand((int)time(NULL));
 
 	for (int i = 0; i < 10; i++)
 	{
@@ -61,7 +62,7 @@ void GenerateNearlySortedData(int a[], int n)
 	}
 }
 
-void GenerateData(int a[], int n, int dataType)
+void GenerateData(vector<int>& a, int n, int dataType)
 {
 	switch (dataType)
 	{
@@ -80,4 +81,10 @@ void GenerateData(int a[], int n, int dataType)
 	default:
 		printf("Error: unknown data type!\n");
 	}
+}
+void PrintList(vector<int> arr) {
+	int n = arr.size();
+	for (int i = 0; i < n; i++)
+		cout << arr[i] << " ";
+	cout << endl;
 }

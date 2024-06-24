@@ -128,7 +128,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="DataGenerator.cpp" />
-    <ClCompile Include="Lab3.cpp" />
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="SortingFunction.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="DataGenerator.h" />
+    <ClInclude Include="SortingFunction.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
