@@ -2,7 +2,7 @@
 #include "DataGenerator.h"
 
 using namespace std;
-int main()
+int main(int agc, char* agcv[])
 {
     //Generate ones list
     cout << "Please input size: ";

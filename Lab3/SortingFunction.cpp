@@ -4,17 +4,20 @@
 #include <vector>
 #include <cmath>
 #include <string>
+#include <fstream>
 #include <random>
 using namespace std;
+
+int count_compare = 0;
 //Selection Sort
 void selection_sort(vector<int>& v) {
     int n = v.size();
-    for (int i = 0; i < n - 1; i++) {
+    for (int i = 0; ++count_compare && i < n - 1; i++) {
         //Find the minimum value and save it (value and position)
         int min_num = v[i];
         int idx = i;
-        for (int j = i + 1; j < n; j++) {
-            if (v[j] < min_num) {
+        for (int j = i + 1; ++count_compare && j < n; j++) {
+            if (++count_compare && v[j] < min_num) {
                 min_num = v[j];
                 idx = j;
             }
@@ -396,6 +399,78 @@ void binary_insertion_sort(vector<int>& arr) {
         }
         arr[j + 1] = tmp;
     }
+}
+int choose_sort(string algo) {
+    if (algo == "selection-sort") return 1;
+    else if (algo == "insertion-sort") return 2;
+    else if (algo == "shell-sort") return 3;
+    else if (algo == "buble-sort") return 4;
+    else if (algo == "heap-sort") return 5;
+    else if (algo == "merge-sort") return 6;
+    else if (algo == "quick-sort") return 7;
+    else if (algo == "radix-sort") return 8;
+    else if (algo == "counting-sort") return 9;
+    else if (algo == "binary-insertion-sort") return 10;
+    else if (algo == "shaker-sort") return 11;
+    else if (algo == "flash-sort") return 12;
+    else return -1;
+}
+auto sort_count(vector<int>& v, int sort_type) {
+    int n = v.size();
+    auto start = std::chrono::high_resolution_clock::now();
+    switch (sort_type) {
+    case 1:
+        selection_sort(v);
+        break;
+    case 2:
+        insertion_sort(v, n);
+        break;
+    case 3:
+        shell_sort(v);
+        break;
+    case 4:
+        bubble_sort(v);
+        break;
+    case 5:
+        heap_sort(v);
+        break;
+    case 6:
+        merge_sort(v, 0, n - 1);
+        break;
+    case 7:
+        quick_sort(v, 0, n - 1);
+        break;
+    case 8:
+        radix_sort(v);
+    case 9:
+        int max_num = *max_element(v.begin(), v.end());
+        v = counting_sort(v, max_num);
+        break;
+    case 10:
+        binary_insertion_sort(v);
+        break;
+    case 11:
+        shaker_sort(v);
+        break;
+    case 12:
+        flash_sort(v);
+        break;
+    }
+    auto stop = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
+    return duration;
+}
+void command4(char* algorithm1, char* algorithm2, char* filename) {
+    string algo1 = algorithm1;
+    string algo2 = algorithm2;
+    fstream fin(filename);
+    int n;
+    fin >> n;
+    vector<int> v(n);
+    for (int i = 0; i < n; i++) {
+        fin >> v[i];
+    }
+
 }
 /*int main()
 {
