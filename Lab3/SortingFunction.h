@@ -7,7 +7,6 @@
 #include <cstring>
 #include <cmath>
 #include <fstream>
-#include <string>
 #include <random>
 
 extern int count_compare;
@@ -25,8 +24,10 @@ void shell_sort(std::vector<int>& v);
 void bucket_sort(std::vector<int>& v);
 void flash_sort(std::vector<int>& v);
 void binary_insertion_sort(std::vector<int>& v);
-void command4(std::string algo1,std::string algo2,std::string filename);
 int choose_sort(std::string algo);
-int choose_data(std::string data);
+void command1(char* algorithm, char* filename, char* param);
+void command2(char* algorithm, char* size, char* order, char* param);
+void command3(char* algorithm, char* size, char* param);
+void command4(std::string algo1, std::string algo2, std::string filename);
 void command5(std::string algo1, std::string algo2, int input_size, std::string input_order);
 std::chrono::milliseconds sort_count(std::vector<int>& v, int sort_type);
