@@ -1,14 +1,9 @@
-#include <iostream>
-#include <algorithm>
-#include <chrono>
-#include <vector>
-#include <cmath>
-#include <string>
-#include <fstream>
-#include <random>
+#include "SortingFunction.h"
+#include "DataGenerator.h"
 using namespace std;
 
 int count_compare = 0;
+
 //Selection Sort
 void selection_sort(vector<int>& v) {
     int n = v.size();
@@ -30,9 +25,9 @@ void selection_sort(vector<int>& v) {
 //Exchange sprt
 void exchange_sort(vector<int>& v) {
     int n = v.size();
-    for (int i = 0; i < n - 1; i++) {
-        for (int j = i + 1; j < n; j++) {
-            if (v[j] < v[i]) {
+    for (int i = 0; ++count_compare && i < n - 1; i++) {
+        for (int j = i + 1; ++count_compare && j < n; j++) {
+            if (++count_compare && v[j] < v[i]) {
                 swap(v[i], v[j]);
             }
         }
@@ -41,11 +36,11 @@ void exchange_sort(vector<int>& v) {
 //Bubble sort
 void bubble_sort(vector<int>& v) {
     int n = v.size();
-    for (int i = 0; i < n - 1; i++) {
-        for (int j = 1; j < n - i; j++) {
+    for (int i = 0; ++count_compare && i < n - 1; i++) {
+        for (int j = 1; ++count_compare && j < n - i; j++) {
             //Compare the element i and i + 1
             //Swap it if element i larger than > i + 1
-            if (v[j] < v[j - 1]) swap(v[j], v[j - 1]);
+            if (++count_compare && v[j] < v[j - 1]) swap(v[j], v[j - 1]);
         }
     }
 }
@@ -58,8 +53,8 @@ void shaker_sort(vector<int>& v) {
         //First, from 0 to n - 1 
         //and swap it if the left ones larger than the right ones
         swapped = false;
-        for (int i = 0; i < n - 1; i++) {
-            if (v[i] > v[i + 1]) {
+        for (int i = 0; ++count_compare && i < n - 1; i++) {
+            if (++count_compare && v[i] > v[i + 1]) {
                 swap(v[i], v[i + 1]);
                 swapped = true;
             }
@@ -68,8 +63,8 @@ void shaker_sort(vector<int>& v) {
         if (!swapped) break;
         swapped = false;
         //Second, from n-2 to 0
-        for (int i = n - 2; i >= 0; i--) {
-            if (v[i] > v[i + 1]) {
+        for (int i = n - 2; ++count_compare && i >= 0; i--) {
+            if (++count_compare && v[i] > v[i + 1]) {
                 swap(v[i], v[i + 1]);
                 swapped = true;
             }
@@ -84,7 +79,7 @@ void insertion_sort(vector<int>& arr, int n) {
         int key = arr[i];
         int j = i - 1;
         //Move all element in subarr (0 to i - 1) to the right side
-        while (j >= 0 && arr[j] > key) {
+        while (++count_compare && j >= 0 && ++count_compare && arr[j] > key) {
             arr[j + 1] = arr[j];
             j--;
         }
@@ -99,10 +94,10 @@ void merge(vector<int>& arr, int p, int q, int r) {
     int nR = r - q;
     int* L = new int[nL];
     int* R = new int[nR];
-    for (int i = 0; i < nL; i++) {
+    for (int i = 0; ++count_compare && i < nL; i++) {
         L[i] = arr[p + i];
     }
-    for (int i = 0; i < nR; i++) {
+    for (int i = 0; ++count_compare && i < nR; i++) {
         R[i] = arr[q + 1 + i];
     }
     //Compare each element of 2 subarray together
@@ -110,8 +105,8 @@ void merge(vector<int>& arr, int p, int q, int r) {
     int i = 0;
     int j = 0;
     int k = p;
-    while (i < nL && j < nR) {
-        if (L[i] <= R[j]) {
+    while ((++count_compare) && (i < nL) && (j < nR)) {
+        if (++count_compare && L[i] <= R[j]) {
             arr[k] = L[i];
             i++;
         }
@@ -122,12 +117,12 @@ void merge(vector<int>& arr, int p, int q, int r) {
         k++;
     }
     //If there are still element in 2 subarray, add it to third array
-    while (i < nL) {
+    while (++count_compare && i < nL) {
         arr[k] = L[i];
         i++;
         k++;
     }
-    while (j < nR) {
+    while (++count_compare && j < nR) {
         arr[k] = R[j];
         j++;
         k++;
@@ -138,7 +133,7 @@ void merge(vector<int>& arr, int p, int q, int r) {
 //That function use recursive to divide into 2 subarray
 //Then, use merge to make it sorted
 void merge_sort(vector<int>& arr, int p, int r) {
-    if (p >= r) return;
+    if (++count_compare && p >= r) return;
     //Find mid to divide into 2 halves
     int q = (p + r) / 2;
     //Continue divide it
@@ -151,32 +146,32 @@ void max_heapify(vector<int>& v, int i, int heap_size) {
     int l = i * 2 + 1;
     int r = i * 2 + 2;
     int largest;
-    if (l < heap_size && v[l] > v[i]) {
+    if ((++count_compare) && (l < heap_size) && (++count_compare) && (v[l] > v[i])) {
         largest = l;
     }
     else largest = i;
-    if (r < heap_size && v[r] > v[largest]) {
+    if ((++count_compare) && (r < heap_size) && (++count_compare) && (v[r] > v[largest])) {
         largest = r;
     }
-    if (largest != i) {
+    if (++count_compare && largest != i) {
         swap(v[i], v[largest]);
         max_heapify(v, largest, heap_size);
     }
 }
 // Heap sort and priority queue 
 void iterative_max_heapify(vector<int>& v, int i, int heap_size) {
-    while (i < heap_size) {
+    while (++count_compare && i < heap_size) {
         int l = i * 2 + 1;
         int r = i * 2 + 2;
         int largest;
-        if (l < heap_size && v[l] > v[i]) {
+        if ((++count_compare) && (l < heap_size) && (++count_compare) && (v[l] > v[i])) {
             largest = l;
         }
         else largest = i;
-        if (r < heap_size && v[r] > v[largest]) {
+        if ((++count_compare) && (r < heap_size) && (++count_compare) && (v[r] > v[largest])) {
             largest = r;
         }
-        if (largest != i) {
+        if (++count_compare && largest != i) {
             swap(v[i], v[largest]);
             i = largest;
         }
@@ -185,10 +180,10 @@ void iterative_max_heapify(vector<int>& v, int i, int heap_size) {
 }
 void heap_sort(vector<int>& v) {
     int heap_size = v.size();
-    for (int i = heap_size / 2 - 1; i >= 0; i--) {
+    for (int i = heap_size / 2 - 1; ++count_compare && i >= 0; i--) {
         iterative_max_heapify(v, i, heap_size);
     }
-    for (int i = heap_size - 1; i > 0; i--) {
+    for (int i = heap_size - 1; ++count_compare && i > 0; i--) {
         swap(v[0], v[i]);
         heap_size--;
         iterative_max_heapify(v, 0, heap_size);
@@ -200,13 +195,13 @@ int partition(vector<int>& v, int p, int r) {
     uniform_int_distribution<int> distribution(p, r);
     swap(v[r], v[distribution(engine)]);*/
     int mid = p + (r - p) / 2;
-    if (v[mid] < v[p]) swap(v[mid], v[p]);
-    if (v[mid] > v[r]) swap(v[mid], v[r]);
+    if (++count_compare && v[mid] < v[p]) swap(v[mid], v[p]);
+    if (++count_compare && v[mid] > v[r]) swap(v[mid], v[r]);
     swap(v[mid], v[r]);
     int key = v[r];
     int i = p - 1;
-    for (int j = p; j < r; j++) {
-        if (v[j] < key) {
+    for (int j = p;++count_compare && j < r; j++) {
+        if (++count_compare && v[j] < key) {
             i++;
             swap(v[j], v[i]);
         }
@@ -215,7 +210,7 @@ int partition(vector<int>& v, int p, int r) {
     return i + 1;
 }
 void quick_sort(vector<int>& v, int p, int r) {
-    if (p < r) {
+    if (++count_compare && p < r) {
         int q = partition(v, p, r);
         quick_sort(v, p, q - 1);
         quick_sort(v, q + 1, r);
@@ -236,15 +231,15 @@ vector<int> counting_sort(vector<int> v, int k) {
     //Initialize c to count the number of (0 -> 9) appeared
     vector<int> c(k + 1, 0);
     //Count the number of appearances
-    for (int i = 0; i < n; i++) {
+    for (int i = 0;++count_compare && i < n; i++) {
         c[v[i]]++;
     }
     //Base on the number of appearances to expand it in order to save all the element
-    for (int i = 1; i <= k; i++) {
+    for (int i = 1;++count_compare && i <= k; i++) {
         c[i] += c[i - 1];
     }
     //use c as index of ans to save the element from n-1 to 0
-    for (int i = n - 1; i >= 0; i--) {
+    for (int i = n - 1;++count_compare && i >= 0; i--) {
         ans[c[v[i]] - 1] = v[i];
         c[v[i]]--;
     }
@@ -256,21 +251,21 @@ void radix_sort(vector<int>& v) {
 
     int n = v.size();
     //We use counting sort to sort the number at the same units
-    for (int i = 1; max_num / i > 0; i *= 10) {
+    for (int i = 1;++count_compare && max_num / i > 0; i *= 10) {
         //Counting sort
         vector<int> a(n, 0);
         vector<int> c(10, 0);
-        for (int j = 0; j < n; j++) {
+        for (int j = 0; ++count_compare && j < n; j++) {
             c[(v[j] / i) % 10]++;
         }
-        for (int j = 1; j < 10; j++) {
+        for (int j = 1; ++count_compare && j < 10; j++) {
             c[j] += c[j - 1];
         }
-        for (int j = n - 1; j >= 0; j--) {
+        for (int j = n - 1; ++count_compare && j >= 0; j--) {
             a[c[(v[j] / i) % 10] - 1] = v[j];
             c[(v[j] / i) % 10]--;
         }
-        for (int j = 0; j < n; j++) {
+        for (int j = 0; ++count_compare && j < n; j++) {
             v[j] = a[j];
         }
     }
@@ -278,11 +273,11 @@ void radix_sort(vector<int>& v) {
 //Shell sort
 void shell_sort(vector<int>& v) {
     int n = v.size();
-    for (int gap = n / 2; gap > 0; gap /= 2) {
-        for (int i = gap; i < n; i++) {
+    for (int gap = n / 2; ++count_compare && gap > 0; gap /= 2) {
+        for (int i = gap; ++count_compare && i < n; i++) {
             int key = v[i];
             int j = i - gap;
-            while (j >= 0 && v[j] > key) {
+            while ((++count_compare) && (j >= 0) && (++count_compare) && (v[j] > key)) {
                 v[j + gap] = v[j];
                 j -= gap;
             }
@@ -296,16 +291,16 @@ void bucket_sort(vector<int>& v) {
     vector<vector<int>> b(n);
     double max_num = (double)(*max_element(v.begin(), v.end())) + 1.0;
     // Cast to [0, 1)
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; ++count_compare && i < n; i++) {
         b[(int)((double)v[i] / max_num * n)].push_back(v[i]);
     }
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; ++count_compare && i < n; i++) {
         int m = b[i].size();
         // Insertion sort
-        for (int j = 1; j < m; j++) {
+        for (int j = 1; ++count_compare && j < m; j++) {
             int key = b[i][j];
             int k = j - 1;
-            while (k >= 0 && b[i][k] > key) {
+            while ((++count_compare) && (k >= 0) && (++count_compare) && (b[i][k] > key)) {
                 b[i][k + 1] = b[i][k];
                 k--;
             }
@@ -313,9 +308,9 @@ void bucket_sort(vector<int>& v) {
         }
     }
     int idx = 0;
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; ++count_compare && i < n; i++) {
         int m = b[i].size();
-        for (int j = 0; j < m; j++) {
+        for (int j = 0; ++count_compare && j < m; j++) {
             v[idx] = b[i][j];
             idx++;
         }
@@ -325,8 +320,8 @@ void bucket_sort(vector<int>& v) {
 int findposofMax(vector<int> arr) {
     int n = arr.size();
     int Max = INT_MIN, idx;
-    for (int i = 0; i < n; i++)
-        if (arr[i] > Max) {
+    for (int i = 0; ++count_compare && i < n; i++)
+        if (++count_compare && arr[i] > Max) {
             Max = arr[i];
             idx = i;
         }
@@ -335,8 +330,8 @@ int findposofMax(vector<int> arr) {
 int findMin(vector<int> arr) {
     int n = arr.size();
     int Min = INT_MAX;
-    for (int i = 0; i < n; i++)
-        if (arr[i] < Min)
+    for (int i = 0; ++count_compare && i < n; i++)
+        if (++count_compare && arr[i] < Min)
             Min = arr[i];
     return Min;
 }
@@ -353,15 +348,15 @@ void flash_sort(vector<int>& arr) {
     int Lastindex[10] = { 0 };
     //Find the number of element for each class
     //Then, Find the last element of each class
-    for (int i = 0; i < n; i++)
+    for (int i = 0; ++count_compare && i < n; i++)
         Lastindex[int((m - 1) * (arr[i] - MinVal) / (arr[max] - MinVal))]++;
     cout << endl;
     Lastindex[0]--;
-    for (int i = 1; i < m; i++)
+    for (int i = 1; ++count_compare && i < m; i++)
         Lastindex[i] += Lastindex[i - 1];
     swap(arr[0], arr[max]);
     int move = 0, i = 0;
-    while (move != n - 1) {
+    while (++count_compare && move != n - 1) {
         int flash = arr[0];
         int pos = int((m - 1) * (flash - MinVal) / (MaxVal - MinVal));
         swap(arr[0], arr[Lastindex[pos]]);
@@ -375,25 +370,25 @@ void flash_sort(vector<int>& arr) {
 //Using binary search to find the element where item should be inserted
 //in left to right
 int BinarySearch(vector<int> arr, int val, int left, int right) {
-    if (left >= right) {
-        if (val > arr[left]) return left + 1;
+    if (++count_compare && left >= right) {
+        if (++count_compare && val > arr[left]) return left + 1;
         else return left;
     }
     int mid = (left + right) / 2;
-    if (arr[mid] == val) return mid + 1;
-    else if (arr[mid] > val) return BinarySearch(arr, val, left, mid - 1);
+    if (++count_compare && arr[mid] == val) return mid + 1;
+    else if (++count_compare && arr[mid] > val) return BinarySearch(arr, val, left, mid - 1);
     else return BinarySearch(arr, val, mid + 1, right);
 }
 void binary_insertion_sort(vector<int>& arr) {
     int n = arr.size();
-    for (int i = 1; i < n; i++) {
+    for (int i = 1; ++count_compare && i < n; i++) {
         int j = i - 1;
         int tmp = arr[i];
         //Find the position where arr[i] should be inserted
         int pos = BinarySearch(arr, tmp, 0, j);
         //Move all element after that position to the right side
         //to make the space for arr[i]
-        while (j >= pos) {
+        while (++count_compare && j >= pos) {
             arr[j + 1] = arr[j];
             j--;
         }
@@ -415,7 +410,14 @@ int choose_sort(string algo) {
     else if (algo == "flash-sort") return 12;
     else return -1;
 }
-auto sort_count(vector<int>& v, int sort_type) {
+int choose_data(string data) {
+    if (data == "-rand") return 0;
+    else if (data == "-nsorted") return 1;
+    else if (data == "-sorted") return 2;
+    else if (data == "-rev") return 3;
+    else return 4;
+}
+std::chrono::milliseconds sort_count(vector<int>& v, int sort_type) {
     int n = v.size();
     auto start = std::chrono::high_resolution_clock::now();
     switch (sort_type) {
@@ -442,10 +444,11 @@ auto sort_count(vector<int>& v, int sort_type) {
         break;
     case 8:
         radix_sort(v);
-    case 9:
+        break;
+    /*case 9:
         int max_num = *max_element(v.begin(), v.end());
         v = counting_sort(v, max_num);
-        break;
+        break;*/
     case 10:
         binary_insertion_sort(v);
         break;
@@ -460,17 +463,51 @@ auto sort_count(vector<int>& v, int sort_type) {
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
     return duration;
 }
-void command4(char* algorithm1, char* algorithm2, char* filename) {
-    string algo1 = algorithm1;
-    string algo2 = algorithm2;
-    fstream fin(filename);
+void command4(string algo1, string algo2, string filename) {
+    fstream fin(filename, ios::in);
     int n;
     fin >> n;
     vector<int> v(n);
     for (int i = 0; i < n; i++) {
-        fin >> v[i];
+        int num{};
+        fin >> num;
+        v[i] = num;
     }
-
+    fin.close();
+    vector<int> temp1(v.begin(), v.end());
+    vector<int> temp2(v.begin(), v.end());
+    cout << "Algorithms: " <<  algo1 << "|" << algo2 << endl;
+    cout << "Input file: " << filename << endl;
+    cout << "Input size: " << n << endl;
+    count_compare = 0;
+    int sort_type = choose_sort(algo1);
+    auto duration1 = sort_count(temp1, sort_type);
+    int compare_count1 = count_compare;
+    count_compare = 0;
+    sort_type = choose_sort(algo2);
+    auto duration2 = sort_count(temp2, sort_type);
+    int compare_count2 = count_compare;
+    cout << "Running time: " << duration1.count() << " ms | " << duration2.count() << " ms" << endl;
+    cout << "Comparisions: " << compare_count1 << " | " << compare_count2 << endl;
+}
+void command5(string algo1, string algo2, int input_size, string input_order) {
+    int dataType = choose_data(input_order);
+    vector<int> v(input_size);
+    GenerateData(v, input_size, dataType);
+    vector<int> temp1(v.begin(), v.end());
+    vector<int> temp2(v.begin(), v.end());
+    cout << "Algorithms: " << algo1 << "|" << algo2 << endl;
+    cout << "Input size: " << input_size << endl;
+    count_compare = 0;
+    int sort_type = choose_sort(algo1);
+    auto duration1 = sort_count(temp1, sort_type);
+    int compare_count1 = count_compare;
+    count_compare = 0;
+    sort_type = choose_sort(algo2);
+    auto duration2 = sort_count(temp2, sort_type);
+    int compare_count2 = count_compare;
+    cout << "Running time: " << duration1.count() << " ms | " << duration2.count() << " ms" << endl;
+    cout << "Comparisions: " << compare_count1 << " | " << compare_count2 << endl;
 }
 /*int main()
 {
