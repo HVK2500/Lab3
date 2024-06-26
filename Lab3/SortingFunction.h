@@ -7,7 +7,6 @@
 #include <cstring>
 #include <cmath>
 #include <fstream>
-#include <string>
 #include <random>
 
 extern long long count_compare;
