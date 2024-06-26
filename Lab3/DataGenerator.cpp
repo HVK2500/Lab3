@@ -57,13 +57,6 @@ void GenerateNearlySortedData(vector<int>& a, int n)
 		Swap(a[r1], a[r2]);
 	}
 }
-int choose_data(string data) {
-	if (data == "-rand") return 0;
-	else if (data == "-nsorted") return 1;
-	else if (data == "-sorted") return 2;
-	else if (data == "-rev") return 3;
-	else return 4;
-}
 void GenerateData(vector<int>& a, int n, int dataType)
 {
 	switch (dataType)
@@ -82,15 +75,6 @@ void GenerateData(vector<int>& a, int n, int dataType)
 		break;
 	default:
 		printf("Error: unknown data type!\n");
-	}
-}
-void NameData(int dataType) {
-	switch (dataType) {
-	case 0: cout << "Randomize" << endl; break;
-	case 1: cout << "Nearly Sorted" << endl; break;
-	case 2: cout << "Sorted" << endl; break;
-	case 3: cout << "Reversed" << endl; break;
-	default: cout << "Unknow" << endl;
 	}
 }
 void PrintList(vector<int> arr) {
