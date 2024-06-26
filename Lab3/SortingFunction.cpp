@@ -344,40 +344,79 @@ int findMin(vector<int> arr) {
             Min = arr[i];
     return Min;
 }
-void flash_sort(vector<int>& arr) {
-    int n = arr.size();
-    //Find pos of Max in array
-    int max = findposofMax(arr);
-    int MaxVal = arr[max];
-    //Find min value of array
-    int MinVal = findMin(arr);
-    //Set the number of class in the array to divide (m)
-    //Then, Create one list to save the Last index of each Class
-    int m = int(0.45 * n);
-    int Lastindex[10] = { 0 };
-    //Find the number of element for each class
-    //Then, Find the last element of each class
-    for (int i = 0; ++count_compare && i < n; i++)
-        Lastindex[int((m - 1) * (arr[i] - MinVal) / (arr[max] - MinVal))]++;
-    cout << endl;
-    Lastindex[0]--;
-    for (int i = 1; ++count_compare && i < m; i++)
-        Lastindex[i] += Lastindex[i - 1];
-    swap(arr[0], arr[max]);
-    int move = 0, i = 0;
-    while (++count_compare && move != n - 1) {
-        int flash = arr[0];
-        int pos = int((m - 1) * (flash - MinVal) / (MaxVal - MinVal));
-        swap(arr[0], arr[Lastindex[pos]]);
-        Lastindex[pos]--;
-        i++;
-        move++;
-    }
-    insertion_sort(arr, n);
-}
+//void flash_sort(vector<int>& arr) {
+//    int n = arr.size();
+//    //Find pos of Max in array
+//    int max = findposofMax(arr);
+//    int MaxVal = arr[max];
+//    //Find min value of array
+//    int MinVal = findMin(arr);
+//    //Set the number of class in the array to divide (m)
+//    //Then, Create one list to save the Last index of each Class
+//    int m = int(0.45 * n);
+//    int Lastindex[10] = { 0 };
+//    //Find the number of element for each class
+//    //Then, Find the last element of each class
+//    for (int i = 0; ++count_compare && i < n; i++)
+//        Lastindex[int((m - 1) * (arr[i] - MinVal) / (arr[max] - MinVal))]++;
+//    cout << endl;
+//    Lastindex[0]--;
+//    for (int i = 1; ++count_compare && i < m; i++)
+//        Lastindex[i] += Lastindex[i - 1];
+//    swap(arr[0], arr[max]);
+//    int move = 0, i = 0;
+//    while (++count_compare && move != n - 1) {
+//        int flash = arr[0];
+//        int pos = int((m - 1) * (flash - MinVal) / (MaxVal - MinVal));
+//        swap(arr[0], arr[Lastindex[pos]]);
+//        Lastindex[pos]--;
+//        i++;
+//        move++;
+//    }
+//    insertion_sort(arr, n);
+//}
 //Binary Insertion Sort
 //Using binary search to find the element where item should be inserted
 //in left to right
+void flash_sort(vector<int>& v) {
+    int n = v.size();
+    double min_num = v[0];
+    double max_num = v[0];
+    for (int i = 1; ++count_compare && i < n; i++) {
+        if (++count_compare && v[i] < min_num) min_num = v[i];
+        if (++count_compare && v[i] > max_num) max_num = v[i];
+    }
+    //divide elemet to buckets
+    int bucket_size = 0.45 * n;
+    vector<vector<int>> buckets(bucket_size);
+    float factor = (float)(bucket_size - 1) / (max_num - min_num);
+    for (int i = 0; ++count_compare && i < n; i++) {
+        int bucket_id = (int)floor((v[i] - min_num) * factor);
+        buckets[bucket_id].push_back(v[i]);
+    }
+    // Insertion sort every buckets
+    for (int i = 0; ++count_compare && i < bucket_size; i++) {
+        int m = buckets[i].size();
+        for (int j = 1; ++count_compare && j < m; j++) {
+            int key = buckets[i][j];
+            int k = j - 1;
+            while ((++count_compare) && (k >= 0) && (++count_compare) && (buckets[i][k] > key)) {
+                buckets[i][k + 1] = buckets[i][k];
+                k--;
+            }
+            buckets[i][k + 1] = key;
+        }
+    }
+    //Copy sorted array to original array
+    int idx = 0;
+    for (int i = 0; ++count_compare && i < bucket_size; i++) {
+        int m = buckets[i].size();
+        for (int j = 0; ++count_compare && j < m; j++) {
+            v[idx] = buckets[i][j];
+            idx++;
+        }
+    }
+}
 int BinarySearch(vector<int> arr, int val, int left, int right) {
     if (++count_compare && left >= right) {
         if (++count_compare && val > arr[left]) return left + 1;
