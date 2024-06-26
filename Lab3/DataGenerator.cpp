@@ -88,3 +88,19 @@ void PrintList(vector<int> arr) {
 		cout << arr[i] << " ";
 	cout << endl;
 }
+int choose_data(string data) {
+	if (data == "-rand") return 0;
+	else if (data == "-nsorted") return 1;
+	else if (data == "-sorted") return 2;
+	else if (data == "-rev") return 3;
+	else return 4;
+}
+void NameData(int dataType) {
+	switch (dataType) {
+	case 0: cout << "Randomize" << endl; break;
+	case 1: cout << "Nearly Sorted" << endl; break;
+	case 2: cout << "Sorted" << endl; break;
+	case 3: cout << "Reversed" << endl; break;
+	default: cout << "Unknow" << endl;
+	}
+}

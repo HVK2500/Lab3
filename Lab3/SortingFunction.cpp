@@ -2,7 +2,7 @@
 #include "DataGenerator.h"
 using namespace std;
 
-int count_compare = 0;
+long long count_compare = 0;
 
 //Selection Sort
 void selection_sort(vector<int>& v) {
@@ -75,11 +75,11 @@ void shaker_sort(vector<int>& v) {
 void insertion_sort(vector<int>& arr, int n) {
     //Check the value i from 1 to n
     //Then, compare it to the subarr 0 to i - 1
-    for (int i = 1; i < n; i++) {
+    for (int i = 1;++count_compare && i < n; i++) {
         int key = arr[i];
         int j = i - 1;
         //Move all element in subarr (0 to i - 1) to the right side
-        while (++count_compare && j >= 0 && ++count_compare && arr[j] > key) {
+        while ((++count_compare) && (j >= 0) && (++count_compare) && (arr[j] > key)) {
             arr[j + 1] = arr[j];
             j--;
         }
@@ -224,10 +224,14 @@ int get_max(vector<int> v) {
     return m;
 }
 //Counting sort
-vector<int> counting_sort(vector<int> v, int k) {
+void counting_sort(vector<int>& v) {
     int n = v.size();
+    int k = v[0];
+    for (int i = 1;++count_compare && i < n; i++) {
+        k = max(k, v[i]);
+    }
     //Initialize ans to save the final sorted array
-    vector<int> ans(n);
+    vector<int> temp(n);
     //Initialize c to count the number of (0 -> 9) appeared
     vector<int> c(k + 1, 0);
     //Count the number of appearances
@@ -240,16 +244,21 @@ vector<int> counting_sort(vector<int> v, int k) {
     }
     //use c as index of ans to save the element from n-1 to 0
     for (int i = n - 1;++count_compare && i >= 0; i--) {
-        ans[c[v[i]] - 1] = v[i];
+        temp[c[v[i]] - 1] = v[i];
         c[v[i]]--;
     }
     //Then, the ans will be sorted
-    return ans;
+    for (int i = 0; i < n; i++) {
+        v[i] = temp[i];
+    }
 }
 void radix_sort(vector<int>& v) {
-    int max_num = *max_element(v.begin(), v.end());
-
+    int max_num = v[0];
     int n = v.size();
+    for (int i = 1; ++count_compare && i < n; i++) {
+        max_num = max(max_num, v[i]);
+    }
+    
     //We use counting sort to sort the number at the same units
     for (int i = 1;++count_compare && max_num / i > 0; i *= 10) {
         //Counting sort
@@ -410,14 +419,27 @@ int choose_sort(string algo) {
     else if (algo == "flash-sort") return 12;
     else return -1;
 }
-int choose_data(string data) {
-    if (data == "-rand") return 0;
-    else if (data == "-nsorted") return 1;
-    else if (data == "-sorted") return 2;
-    else if (data == "-rev") return 3;
-    else return 4;
+void sort_all() {
+    vector<string> data_order{ "Random", "Sorted", "Reverse", "Nearly sorted" };
+    vector<int> data_size{ 10000, 30000, 50000, 100000, 300000, 500000 };
+    vector<string> sorting_algorithms{ "selection-sort" ,"insertion-sort","shell-sort" ,"buble-sort" ,"heap-sort" ,"merge-sort" ,"quick-sort","radix-sort","counting-sort","binary-insertion-sort","shaker-sort","flash-sort" };
+    for (int i = 0; i < data_order.size(); i++) {
+        cout << data_order[i] << " data: " << endl;
+        for (auto size : data_size) {
+            cout << "Data size: " << size << endl;
+            vector<int> a(size);
+            GenerateData(a, size, i);
+            for (int j = 0; j < sorting_algorithms.size(); j++) {
+                vector<int> temp(a.begin(), a.end());
+                auto duration = sort_count(temp, j + 1);
+                cout << sorting_algorithms[j] << ": " << duration.count() << " ms | " << count_compare << endl;
+            }
+        }
+    }
 }
+
 std::chrono::milliseconds sort_count(vector<int>& v, int sort_type) {
+    count_compare = 0;
     int n = v.size();
     auto start = std::chrono::high_resolution_clock::now();
     switch (sort_type) {
@@ -445,10 +467,9 @@ std::chrono::milliseconds sort_count(vector<int>& v, int sort_type) {
     case 8:
         radix_sort(v);
         break;
-    /*case 9:
-        int max_num = *max_element(v.begin(), v.end());
-        v = counting_sort(v, max_num);
-        break;*/
+    case 9:
+        counting_sort(v);
+        break;
     case 10:
         binary_insertion_sort(v);
         break;
@@ -462,6 +483,104 @@ std::chrono::milliseconds sort_count(vector<int>& v, int sort_type) {
     auto stop = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
     return duration;
+}
+void command1(char* algorithm, char* filename, char* parameter) {
+    string file = filename;
+    string algo = algorithm;
+    string param = parameter;
+    ifstream fin(file, ios::in);
+    if (!fin) {
+        cout << "Cannot open file!!";
+        return;
+    }
+    int n;
+    fin >> n;
+    vector<int> v(n);
+    for (int i = 0; i < n; i++) {
+        fin >> v[i];
+    }
+    fin.close();
+    count_compare = 0;
+    auto duration = sort_count(v, choose_sort(algo));
+    cout << algorithm << " MODE" << endl;
+    cout << algorithm << ":\n";
+    cout << "Input file: " << filename << endl;
+    cout << "Input size: " << n << endl;
+    cout << "------------------------------\n";
+    if (param == "-time") cout << "Running time: " << duration.count() << endl;
+    else if (param == "-comp") cout << "Comparisions: " << count_compare << endl;
+    else if (param == "-both") {
+        cout << "Running time: " << duration.count() << endl;
+        cout << "Comparisions: " << count_compare << endl;
+    }
+    else cout << "There is no suitable output mode.\n";
+    ofstream fout;
+    fout.open("output.txt", ios::out);
+    for (int i = 0; i < n; i++)
+        fout << v[i] << " ";
+    fout << endl;
+    fout.close();
+}
+void command2(char* algorithm, char* size, char* order, char* parameter) {
+    int n = stoi(size);
+    vector<int> v(n);
+    string data = order;
+    string algo = algorithm;
+    string param = parameter;
+    GenerateData(v, n, choose_data(data));
+    count_compare = 0;
+    auto duration = sort_count(v, choose_sort(algo));
+    cout << algorithm << " MODE" << endl;
+    cout << algorithm << ":\n";
+    cout << "Input size: " << size << endl;
+    cout << "Input order: "; NameData(choose_data(data));
+    cout << "------------------------------\n";
+    if (param == "-time") cout << "Running time: " << duration.count() << " miliseconds" << endl;
+    else if (param == "-comp") cout << "Comparisions: " << count_compare << endl;
+    else if (param == "-both") {
+        cout << "Running time: " << duration.count() << endl;
+        cout << "Comparisions: " << count_compare << endl;
+    }
+    else cout << "There is no suitable output mode.\n";
+    ofstream fout;
+    fout.open("output.txt", ios::out);
+    for (int i = 0; i < n; i++)
+        fout << v[i] << " ";
+    fout << endl;
+    fout.close();
+}
+void command3(char* algorithm, char* size, char* parameter) {
+    int n = stoi(size);
+    vector<int> v(n);
+    string algo = algorithm;
+    string param = parameter;
+    cout << algorithm << " MODE" << endl;
+    cout << algorithm << ":\n";
+    cout << "Input size: " << size << endl;
+    cout << endl;
+    for (int i = 0; i < 4; i++) {
+        GenerateData(v, n, i);
+        count_compare = 0;
+        auto duration = sort_count(v, choose_sort(algo));
+        cout << "Input order: "; NameData(i);
+        cout << "------------------------------\n";
+        if (param == "-time") cout << "Running time: " << duration.count() << endl;
+        else if (param == "-comp") cout << "Comparisions: " << count_compare << endl;
+        else if (param == "-both") {
+            cout << "Running time: " << duration.count() << endl;
+            cout << "Comparisions: " << count_compare << endl;
+        }
+        else cout << "There is no suitable output mode.\n";
+        ofstream fout;
+        if (i == 0) fout.open("input_1.txt", ios::out);
+        else if (i == 1) fout.open("input_2.txt", ios::out);
+        else if (i == 2) fout.open("input_3.txt", ios::out);
+        else fout.open("input_4.txt", ios::out);
+        for (int j = 0; j < n; j++)
+            fout << v[j] << " ";
+        cout << endl;
+        fout.close();
+    }
 }
 void command4(string algo1, string algo2, string filename) {
     fstream fin(filename, ios::in);
@@ -508,6 +627,12 @@ void command5(string algo1, string algo2, int input_size, string input_order) {
     int compare_count2 = count_compare;
     cout << "Running time: " << duration1.count() << " ms | " << duration2.count() << " ms" << endl;
     cout << "Comparisions: " << compare_count1 << " | " << compare_count2 << endl;
+    fstream fout("output.txt", ios::out);
+    fout << input_size << endl;
+    for (int i = 0; i < input_size; i++) {
+        fout << temp1[i] << " ";
+    }
+    fout.close();
 }
 /*int main()
 {
