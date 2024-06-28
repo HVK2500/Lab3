@@ -4,8 +4,8 @@
 using namespace std;
 int main(int argc, char* argv[])
 {
-    sort_all();
-    /*if (argc > 4) {
+    //sort_all();
+    if (argc > 4) {
         string mode = argv[1];
         if (mode == "-a") {
             if (argc == 5) {
@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
             else cout << "Cannot run!!\n";
         }
         else cout << "Cannot run!!\n";
-    }*/
+    }
     
     
     return 0;

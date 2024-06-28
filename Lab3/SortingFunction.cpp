@@ -301,37 +301,64 @@ void shell_sort(vector<int>& v) {
     }
 }
 //Bucket sort
-void bucket_sort(vector<int>& v) {
-    int n = v.size();
-    vector<vector<int>> b(n);
-    double max_num = (double)(*max_element(v.begin(), v.end())) + 1.0;
-    // Cast to [0, 1)
-    for (int i = 0; ++count_compare && i < n; i++) {
-        b[(int)((double)v[i] / max_num * n)].push_back(v[i]);
-    }
-    for (int i = 0; ++count_compare && i < n; i++) {
-        int m = b[i].size();
-        // Insertion sort
-        for (int j = 1; ++count_compare && j < m; j++) {
-            int key = b[i][j];
-            int k = j - 1;
-            while ((++count_compare) && (k >= 0) && (++count_compare) && (b[i][k] > key)) {
-                b[i][k + 1] = b[i][k];
-                k--;
-            }
-            b[i][k + 1] = key;
-        }
-    }
-    int idx = 0;
-    for (int i = 0; ++count_compare && i < n; i++) {
-        int m = b[i].size();
-        for (int j = 0; ++count_compare && j < m; j++) {
-            v[idx] = b[i][j];
-            idx++;
-        }
-    }
-}
+
 //Flash sort
+void flash_sort(vector<int>& v) {
+    int n = v.size();
+    int min_value = v[0];
+    int max_value = v[0];
+    for (int i = 0; ++count_compare && i < n; i++) {
+        if (++count_compare && v[i] < min_value) min_value = v[i];
+        if (++count_compare && v[i] > max_value) max_value = v[i];
+    }
+    int m = 0.45 * n;
+    auto get_bucket_idx = [&](int value) {
+        int idx = floor(m * double((value - min_value)) / double((max_value - min_value + 1)));
+        return idx;
+        };
+    vector<int> buckets(m, 0);
+    for (auto value : v) {
+        buckets[get_bucket_idx(value)]++;
+    }
+    for (int i = 1; ++count_compare && i < m; i++) {
+        buckets[i] += buckets[i - 1];
+    }
+    auto find_swap_index = [&](int bucket_idx) {
+        for (int i = buckets[bucket_idx - 1]; ++count_compare && i < buckets[bucket_idx]; i++) {
+            if (++count_compare && get_bucket_idx(v[i]) != bucket_idx) return i;
+        }
+        };
+    auto arrange_buckets = [&](int idx1, int idx2, int current_bucket_idx) {
+        for (int i = idx1; ++count_compare && i < idx2; i++) {
+            int bucket_idx = get_bucket_idx(v[i]);
+            while (++count_compare && bucket_idx != current_bucket_idx) {
+                int swap_idx = find_swap_index(bucket_idx);
+                swap(v[i], v[swap_idx]);
+                bucket_idx = get_bucket_idx(v[i]);
+            }
+        }
+        };
+    for (int i = 0; ++count_compare && i < m; i++) {
+        if (++count_compare && i == 0) arrange_buckets(0, buckets[i], i);
+        else arrange_buckets(buckets[i - 1], buckets[i], i);
+    }
+    auto insertion_sort_buckets = [&](int begin, int end) {
+        for (int i = begin; ++count_compare && i < end; i++) {
+            int key = v[i];
+            int j = i - 1;
+            while ((++count_compare) && (j >= begin) && (++count_compare) && (v[j] > key)) {
+                v[j + 1] = v[j];
+                j--;
+            }
+            v[j + 1] = key;
+        }
+        };
+    for (int i = 0; ++count_compare && i < m; i++) {
+        if (++count_compare && i == 0) insertion_sort_buckets(0, buckets[0]);
+        else insertion_sort_buckets(buckets[i - 1], buckets[i]);
+    }
+
+}
 int findposofMax(vector<int> arr) {
     int n = arr.size();
     int Max = INT_MIN, idx;
@@ -350,41 +377,8 @@ int findMin(vector<int> arr) {
             Min = arr[i];
     return Min;
 }
-//void flash_sort(vector<int>& arr) {
-//    int n = arr.size();
-//    //Find pos of Max in array
-//    int max = findposofMax(arr);
-//    int MaxVal = arr[max];
-//    //Find min value of array
-//    int MinVal = findMin(arr);
-//    //Set the number of class in the array to divide (m)
-//    //Then, Create one list to save the Last index of each Class
-//    int m = int(0.45 * n);
-//    int Lastindex[10] = { 0 };
-//    //Find the number of element for each class
-//    //Then, Find the last element of each class
-//    for (int i = 0; ++count_compare && i < n; i++)
-//        Lastindex[int((m - 1) * (arr[i] - MinVal) / (arr[max] - MinVal))]++;
-//    cout << endl;
-//    Lastindex[0]--;
-//    for (int i = 1; ++count_compare && i < m; i++)
-//        Lastindex[i] += Lastindex[i - 1];
-//    swap(arr[0], arr[max]);
-//    int move = 0, i = 0;
-//    while (++count_compare && move != n - 1) {
-//        int flash = arr[0];
-//        int pos = int((m - 1) * (flash - MinVal) / (MaxVal - MinVal));
-//        swap(arr[0], arr[Lastindex[pos]]);
-//        Lastindex[pos]--;
-//        i++;
-//        move++;
-//    }
-//    insertion_sort(arr, n);
-//}
-//Binary Insertion Sort
-//Using binary search to find the element where item should be inserted
-//in left to right
-void flash_sort(vector<int>& v) {
+
+void bucket_sort(vector<int>& v) {
     int n = v.size();
     double min_num = v[0];
     double max_num = v[0];
@@ -423,15 +417,15 @@ void flash_sort(vector<int>& v) {
         }
     }
 }
+
 int BinarySearch(vector<int> arr, int val, int left, int right) {
-    if (++count_compare && left >= right) {
-        if (++count_compare && val > arr[left]) return left + 1;
-        else return left;
+    while (++count_compare && left < right) {
+        int mid = (right + left) / 2;
+        if (++count_compare && arr[mid] == val) return mid + 1;
+        else if (++count_compare && arr[mid] > val) right = mid - 1;
+        else left = mid + 1;
     }
-    int mid = (left + right) / 2;
-    if (++count_compare && arr[mid] == val) return mid + 1;
-    else if (++count_compare && arr[mid] > val) return BinarySearch(arr, val, left, mid - 1);
-    else return BinarySearch(arr, val, mid + 1, right);
+    return left;
 }
 void binary_insertion_sort(vector<int>& arr) {
     int n = arr.size();
@@ -465,7 +459,7 @@ int choose_sort(string algo) {
     else return -1;
 }
 void sort_all() {
-    vector<string> data_order{ "Random", "Sorted", "Reverse", "Nearly sorted" };
+    vector<string> data_order{ "Random", "Nearly sorted", "Sorted", "Reverse"};
     vector<int> data_size{ 10000, 30000, 50000, 100000, 300000, 500000 };
     vector<string> sorting_algorithms{ "selection-sort" ,"insertion-sort","shell-sort" ,"buble-sort" ,"heap-sort" ,"merge-sort" ,"quick-sort","radix-sort","counting-sort","binary-insertion-sort","shaker-sort","flash-sort" };
     for (int i = 0; i < data_order.size(); i++) {
@@ -679,68 +673,5 @@ void command5(string algo1, string algo2, int input_size, string input_order) {
     }
     fout.close();
 }
-/*int main()
-{
-    cout << "Please input size: ";
-    int n; cin >> n;
 
-    // Random vector
-    vector<int> v(n);
-    /*srand(time(NULL));
-    auto f = []() -> int { return rand() % 10000; };
-    random_device rnd_device;
-    mt19937 mersenne_engine{ rnd_device() };
-    uniform_int_distribution<int> distribution(0, n);
-    auto f = [&distribution, &mersenne_engine]() {return distribution(mersenne_engine); };
-    generate(v.begin(), v.end(), f);
-
-
-
-
-    //Check if sorting is true
-
-    vector<int> temp1(v.begin(), v.end());
-    vector<int> temp2(v.begin(), v.end());
-    sort(temp1.begin(), temp1.end());
-    //selection_sort(temp2);
-    //exchange_sort(temp2);
-    //buble_sort(temp2);
-    //insertion_sort(temp2, n);
-    //merge_sort(temp2, 0, n - 1);
-    //heap_sort(temp2);
-    //quick_sort(temp2, 0, n - 1);
-    //temp2 = counting_sort(v, get_max(v));
-    //radix_sort(temp2);
-    //bucket_sort(temp2);
-    //shaker_sort(temp2);
-    shell_sort(temp2);
-    bool check = true;
-    for (int i = 0; i < n; i++) {
-        if (temp1[i] != temp2[i]) check = false;
-    }
-    if (check) cout << "True" << endl;
-    else cout << "False" << endl;
-
-    ///////////////////////////////////////////////////////////////////////////////
-    // Count time
-    auto start = std::chrono::high_resolution_clock::now();
-
-    //selection_sort(v);
-    //exchange_sort(v);
-    //buble_sort(v);
-    //insertion_sort(v, n);
-    //merge_sort(v, 0, n - 1);
-    //heap_sort(v);
-    //quick_sort(v, 0, n - 1);
-    //v = counting_sort(v, get_max(v));
-    //radix_sort(v);
-    //bucket_sort(v);
-    //shaker_sort(v);
-    shell_sort(v);
-    auto stop = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
-    cout << "Time taken by funciton: " << duration.count() << " milliseconds" << endl;
-
-    return 0;
-}*/
 
