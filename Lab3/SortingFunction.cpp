@@ -37,38 +37,40 @@ void exchange_sort(vector<int>& v) {
 void bubble_sort(vector<int>& v) {
     int n = v.size();
     for (int i = 0; ++count_compare && i < n - 1; i++) {
+        bool swapped = false;
         for (int j = 1; ++count_compare && j < n - i; j++) {
-            //Compare the element i and i + 1
-            //Swap it if element i larger than > i + 1
-            if (++count_compare && v[j] < v[j - 1]) swap(v[j], v[j - 1]);
+            if (++count_compare && v[j] < v[j - 1]) {
+                swap(v[j], v[j - 1]);
+                swapped = true;
+            }
         }
+        if (++count_compare && swapped == false) break;
     }
 }
 //Shaker sort
 void shaker_sort(vector<int>& v) {
     int n = v.size();
     bool swapped = true;
-    while (swapped) {
-        //We use bubble sort 2 times
-        //First, from 0 to n - 1 
-        //and swap it if the left ones larger than the right ones
+    int begin = 0;
+    int end = n - 1;
+    while (++count_compare && swapped) {
         swapped = false;
-        for (int i = 0; ++count_compare && i < n - 1; i++) {
+        for (int i = begin; ++count_compare && i < end; i++) {
             if (++count_compare && v[i] > v[i + 1]) {
                 swap(v[i], v[i + 1]);
                 swapped = true;
             }
         }
-        //If not swapped -> the array still sort -> we break
-        if (!swapped) break;
+        if (++count_compare && !swapped) break;
         swapped = false;
-        //Second, from n-2 to 0
-        for (int i = n - 2; ++count_compare && i >= 0; i--) {
+        end--;
+        for (int i = end - 1; ++count_compare && i >= begin; i--) {
             if (++count_compare && v[i] > v[i + 1]) {
                 swap(v[i], v[i + 1]);
                 swapped = true;
             }
         }
+        begin++;
     }
 }
 //Insertion sort
@@ -226,53 +228,57 @@ int get_max(vector<int> v) {
 //Counting sort
 void counting_sort(vector<int>& v) {
     int n = v.size();
-    int k = v[0];
-    for (int i = 1;++count_compare && i < n; i++) {
-        k = max(k, v[i]);
+    int max_num = v[0];
+    int min_num = v[0];
+    for (int i = 1; ++count_compare && i < n; i++) {
+        if (++count_compare && v[i] > max_num) max_num = v[i];
+        if (++count_compare && v[i] < min_num) min_num = v[i];
     }
     //Initialize ans to save the final sorted array
     vector<int> temp(n);
     //Initialize c to count the number of (0 -> 9) appeared
-    vector<int> c(k + 1, 0);
+    vector<int> c(max_num - min_num + 1, 0);
     //Count the number of appearances
-    for (int i = 0;++count_compare && i < n; i++) {
-        c[v[i]]++;
+    for (int i = 0; ++count_compare && i < n; i++) {
+        c[v[i] - min_num]++;
     }
     //Base on the number of appearances to expand it in order to save all the element
-    for (int i = 1;++count_compare && i <= k; i++) {
+    for (int i = 1; ++count_compare && i <= max_num - min_num; i++) {
         c[i] += c[i - 1];
     }
     //use c as index of ans to save the element from n-1 to 0
-    for (int i = n - 1;++count_compare && i >= 0; i--) {
-        temp[c[v[i]] - 1] = v[i];
-        c[v[i]]--;
+    for (int i = n - 1; ++count_compare && i >= 0; i--) {
+        temp[c[v[i] - min_num] - 1] = v[i];
+        c[v[i] - min_num]--;
     }
     //Then, the ans will be sorted
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; ++count_compare && i < n; i++) {
         v[i] = temp[i];
     }
 }
 void radix_sort(vector<int>& v) {
     int max_num = v[0];
+    int min_num = v[0];
     int n = v.size();
     for (int i = 1; ++count_compare && i < n; i++) {
-        max_num = max(max_num, v[i]);
+        if (++count_compare && v[i] > max_num) max_num = v[i];
+        if (++count_compare && v[i] < min_num) min_num = v[i];
     }
-    
+
     //We use counting sort to sort the number at the same units
-    for (int i = 1;++count_compare && max_num / i > 0; i *= 10) {
+    for (int i = 1; ++count_compare && (max_num - min_num) / i > 0; i *= 10) {
         //Counting sort
         vector<int> a(n, 0);
         vector<int> c(10, 0);
         for (int j = 0; ++count_compare && j < n; j++) {
-            c[(v[j] / i) % 10]++;
+            c[((v[j] - min_num) / i) % 10]++;
         }
         for (int j = 1; ++count_compare && j < 10; j++) {
             c[j] += c[j - 1];
         }
         for (int j = n - 1; ++count_compare && j >= 0; j--) {
-            a[c[(v[j] / i) % 10] - 1] = v[j];
-            c[(v[j] / i) % 10]--;
+            a[c[((v[j] - min_num) / i) % 10] - 1] = v[j];
+            c[((v[j] - min_num) / i) % 10]--;
         }
         for (int j = 0; ++count_compare && j < n; j++) {
             v[j] = a[j];
@@ -386,7 +392,7 @@ void flash_sort(vector<int>& v) {
         if (++count_compare && v[i] < min_num) min_num = v[i];
         if (++count_compare && v[i] > max_num) max_num = v[i];
     }
-    //divide elemet to buckets
+    //Divide elements to buckets
     int bucket_size = 0.45 * n;
     vector<vector<int>> buckets(bucket_size);
     float factor = (float)(bucket_size - 1) / (max_num - min_num);
